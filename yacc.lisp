@@ -277,35 +277,47 @@ nil
 (defparameter *parsed* nil)
 
 ;;;FIXME:: use incremental lengths, not absolute string positions
-(defun keep-parsing (&optional (path *testpath*))
-  (let ((string (alexandria:read-file-into-string (ensure-cached-no-directives path))))
-    (setf *typedef-env* nil)
-    (let ((start 0)
-	  (end (length string))
-	  (lex-fun (lambda (start end)
-		     (lex-for-cl-yacc-cached :path path :string string :start start :end end)
-		     #+nil
-		     (lex-for-cl-yacc string :start start :end end))))
-      (block exit
-	(loop
-	   (multiple-value-bind (cst where)
-	       (parse-external-declaration-unknown-length
-		lex-fun
-		:start start :end end)
-	     (when (and where (= where start)) ;;parsing failed
-	       (return-from exit))
-	     (push cst *parsed*)
-	     ;;test whether the external-declaration was a typedef
-	     (multiple-value-bind (value typedef-p) (cst-typedef-p cst)
-	       ;;if it is
-	       (when typedef-p
-		 ;;then add the new names to the environment
-		 (mapc
-		  (lambda (x)
-		    (pushnew x *typedef-env* :test 'string=))
-		  value)))
-	     (setf start
-		   where)))))))
+(defun keep-parsing (&key (path *testpath* path-supplied-p)
+		       (string (alexandria:read-file-into-string (ensure-cached-no-directives path))
+			       string-supplied-p)
+		       (save-result nil))
+  (when (and path-supplied-p string-supplied-p)
+    (error "specify a path or a string"))
+  (setf *typedef-env* nil)
+  (let ((start 0)
+	(end (length string))
+	(lex-fun
+	 (if path-supplied-p
+	     (lambda (start end)
+	       (lex-for-cl-yacc-cached :path path :string string :start start :end end))
+	     (lambda (start end)
+	       (lex-for-cl-yacc string :start start :end end))))
+	(results nil))
+    (block exit
+      (loop
+	 (multiple-value-bind (cst where)
+	     (parse-external-declaration-unknown-length
+	      lex-fun
+	      :start start :end end)
+	   (when (and where (= where start)) ;;parsing failed
+	     (return-from exit))
+	   (push cst results)
+	   ;;test whether the external-declaration was a typedef
+	   (multiple-value-bind (value typedef-p) (cst-typedef-p cst)
+	     ;;if it is
+	     (when typedef-p
+	       ;;then add the new names to the environment
+	       (mapc
+		(lambda (x)
+		  (pushnew x *typedef-env* :test 'string=))
+		value)))
+	   (setf start
+		 where))))
+    (when save-result
+      (setf *parsed* (append results *parsed*)))
+    (values results
+	    *typedef-env*)))
+
 (defparameter *c-data*
   `("typedef struct tagNode
 {

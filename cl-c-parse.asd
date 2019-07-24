@@ -1,4 +1,4 @@
-(asdf:defsystem #:c-parse
+(asdf:defsystem #:cl-c-parse
   :author "terminal625"
   :license "MIT"
   :description "processed c parser"
