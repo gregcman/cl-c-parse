@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>Frequently Asked Questions on the ANSI C grammar</title>
+<link rel="made" rev="made" href="mailto:jutta@pobox.com">
+<style type="text/css">
+<!--
+body { margin: 4em; }
+-->
+</style>
+</head><body>
+
+<h1><font size=3>
+(Context: <a href="http://www.quut.com/c/">C</a> - <a href="http://www.quut.com/c/ANSI-C-grammar-y.html">yacc</a> - <a href="http://www.quut.com/c/ANSI-C-grammar-l.html">lex</a>)
+</font><br/>
+Frequently Asked Questions about the <a href-"ANSI-C-grammar-y.html"
+	>ANSI C Yacc Grammar</a></h1>
+<br>
+<h3>Q: How current is this? Are you still maintaining this?</h3>
+<blockquote>
+As of 2017, yes.  There are some versions of the grammars
+floating around in various states of disrepair that I can't
+do anything about.  The current one is at 
+<a href="http://www.quut.com/c/ANSI-C-grammar-y.html"
+	>www.quut.com/c/ANSI-C-grammar-y.html</a>.
+(I didn't own the previous hosts, but do control quut.com, so there's
+some chance of this URL being more stable than the others.)
+
+</blockquote>
+<br>
+<h3>Q: So, can I use this to make derived work?</h3>
+<blockquote>
+Yes, you can use this to make derived work with or without attribution;
+both I and the grammar's original poster are fine with that.
+(It's just a grammar.  We've saved you some typing, but that's about it;
+the bulk of the work is still left.)
+</blockquote>
+
+<br>
+<h3>Q: Your grammar is broken!  I'm getting a "shift-reduce conflict"!</h3>
+<blockquote>This is known as the <i>dangling else problem</i>.  Theoretically,
+there are two possible parse trees for
+<pre>
+	if (A) if (B) stmt1; else stmt2;
+</pre>
+In the correct parse tree, the "else" belongs to the "if (B)".
+<blockquote>
+<img src="ANSI-C-grammar-faq-else1.gif">
+</blockquote>
+<br>
+In the incorrect but theoretically possible parse tree, the else 
+belongs to the if (A).
+<br>
+<blockquote>
+<img src="ANSI-C-grammar-faq-else2.gif">
+</blockquote>
+</br>
+</center>
+Programming languages usually* resolve this
+by attaching the else to the innermost open if.  (This is the
+way many human languages deal with similar ambiguities as well.)
+C does it that way, too, and so do yacc and its descendants -
+it's safe to ignore the warning message, as long as you know
+your grammar and know what it means.
+<p>
+A second shift-reduce conflict was introduced in C11 with the new
+"_Atomic" type-specifier (if followed by parentheses) or type-qualifier.
+<p>
+You can make Yacc not print messages about shift/reduce conflicts
+by announcing how many there are in the header:
+<blockquote>	
+	<tt>%expect 2</tt>
+</blockquote>	
+tells it to ignore one such warning. (So why didn't I include
+one in the grammar?  Because this isn't a finished tool, just
+a part.  I expect users to either just read or to heavily edit
+the grammar, and there's no point in polishing it beforehand.)
+<p>
+<hr>
+<font size=2>* Every once in a while, a language designer is
+fed up with the ambiguity and decides to eradicate it once
+and for all.  Some otherwise Algol-like languages solve the
+problem by always requiring curly braces around their if/else
+parts (perl, sieve), or by using indentation itself as a
+bracketing mechanism (python).
+</font>
+</blockquote>
+
+<br>
+<h3>Q: Your grammar is broken!  It doesn't parse this C program here!</h3>
+<blockquote>To parse full-fledged C source code, you'll need at least
+a preprocessor and a semantic analyser.  For example, you'll need to
+parse C declarations to keep track of which words are names of types 
+and which ones are still available as new identifiers.
+You'll need to keep track of scopes, and update your tables of what
+identifiers mean as their declarations move in and out of scope.
+<p>
+Writing a semantic analyser for C isn't easy.
+<p>
+From far away, the grammar looks like all you need to do is
+to compile and run it (surely, with this much Yacc input, how
+much work can there be left?), but that's misleading.
+</blockquote>
+<br>
+If you find anything else wrong, send email to <i>jutta@pobox.com</i>.  Thanks!
+<br>

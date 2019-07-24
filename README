@@ -1,0 +1,10 @@
+run (c-parse::start-up) to set up c parsing code
+
+This is a C11 parser that parses:
+http://www.quut.com/c/ANSI-C-grammar-y.html
+http://www.quut.com/c/ANSI-C-grammar-l-2011.html
+
+And generates esrap-liquid rules for the lexer
+And cl-yacc rules for the grammar
+
+Which are exact specifications of the C11 grammar. It spits out a CST [concrete syntax tree]
