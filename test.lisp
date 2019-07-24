@@ -176,9 +176,13 @@
 		 ))))
     (format nil "cpp ~a ~a ~a -o ~a " (cpp-include-directories-foo) flags infile outfile)))
 
-(defparameter *pycparser-src-path* "/home/imac/install/src/pycparser-master/")
+(defparameter *pycparser-src-path*
+  ;;"/home/imac/install/src/pycparser-master/"
+  )
 (defparameter *pycparser-c-ast-cfg*
-  (merge-pathnames "pycparser/_c_ast.cfg" *pycparser-src-path*))
+  (merge-pathnames "_c_ast.cfg" *path*)
+ ;; (merge-pathnames "pycparser/_c_ast.cfg" *pycparser-src-path*)
+  )
 
 (deflazy:deflazy pycparser-c-ast-cfg ()
   (remove-if

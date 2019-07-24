@@ -1,6 +1,6 @@
 (in-package :c-parse)
 
-(defparameter *path* (asdf:system-source-directory :c-parse))
+(defparameter *path* (asdf:system-source-directory :cl-c-parse))
 ;;generated via grepping .h and .c files for "#include <"
 (defun whitespace-string (str)
   "return t if its all spaces or empty"
@@ -94,11 +94,12 @@
     "src/"))
   #+nil
   "/home/imac/install/src/pycparser-master/examples/c_files/funky.c"
-  ;;#+nil
-  "/home/imac/install/src/pycparser-master/examples/c_files/hash.c")
+  #+nil
+  "/home/imac/install/src/pycparser-master/examples/c_files/hash.c"
+  (merge-pathnames "test/hash.c" *path*))
 
 ;;FIXME:: where to put test files?
-(defparameter *text-test-file*
+(defparameter *c-test-file*
   (alexandria:read-file-into-string
    *testpath*))
 

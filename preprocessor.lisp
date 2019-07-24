@@ -118,7 +118,7 @@
 	     nil)))
 ;;FIXME:: non-consing esrap-liquid?
 (defparameter *acc* nil)
-(defun get-directives (&optional (fun 'per-iter) (text *text-test-file*))
+(defun get-directives (&optional (fun 'per-iter) (text *c-test-file*))
   (catch 'out
     (let ((start 0))
       (loop (multiple-value-bind (directive length)

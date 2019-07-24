@@ -318,6 +318,13 @@ nil
     (values results
 	    *typedef-env*)))
 
+(defun c-parse (string)
+  "Parse a string representing C code, return (values [list of declarations] [list of typedef names])"
+  (keep-parsing :string string))
+
+(defun print-csts (csts)
+  (mapcar 'dump-cst csts))
+
 (defparameter *c-data*
   `("typedef struct tagNode
 {
